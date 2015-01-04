@@ -1,5 +1,6 @@
 # Jsgf
 
+[![Build Status](https://travis-ci.org/bfoz/jsgf-ruby.png)](https://travis-ci.org/bfoz/jsgf-ruby)
 [![Gem Version](https://badge.fury.io/rb/jsgf.svg)](http://badge.fury.io/rb/jsgf)
 
 ## Installation
