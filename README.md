@@ -1,6 +1,6 @@
 # Jsgf
 
-TODO: Write a gem description
+[![Gem Version](https://badge.fury.io/rb/jsgf.svg)](http://badge.fury.io/rb/jsgf)
 
 ## Installation
 
