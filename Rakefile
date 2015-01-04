@@ -8,6 +8,9 @@ end
 task :default => :test
 task compile: 'lib/jsgf/parser.rb'
 
+# Recompile the parser before building the gem package
+task :build => :compile
+
 Rake::TestTask.new(:test => :compile) do |t|
     t.libs.push "lib"
     t.test_files = FileList['test/**/*.rb']
