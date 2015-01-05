@@ -33,4 +33,10 @@ describe JSGF::Tokenizer do
     it 'must recognize a token' do
 	JSGF::Tokenizer.new(' some_token ').next_token.must_equal [:TOKEN, 'some_token']
     end
+
+    describe 'when given comments' do
+	it 'must skip C-style comments' do
+	    JSGF::Tokenizer.new(' /* a comment */ some_token ').next_token.must_equal [:TOKEN, 'some_token']
+	end
+    end
 end

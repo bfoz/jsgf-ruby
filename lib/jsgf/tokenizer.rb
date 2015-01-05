@@ -24,6 +24,12 @@ module JSGF
 	    @scanner.skip(/\s+/)	# Skip all leading whitespace
 	    @scanner.skip(%r{//.*\n})	# Skip single-line comments
 
+	    # Skip C-style comments
+	    if @scanner.scan(%r{/\*})
+		# Look for the end of the block, and skip any trailing whitespace
+		@scanner.skip_until(%r{\*/\s*})
+	    end
+
 	    TOKENS.each do |(pattern, token)|
 		text = @scanner.scan(pattern)
 		return [token, text] if text
