@@ -1,5 +1,7 @@
 module JSGF
     class Optional
+	attr_reader :elements
+
 	def initialize(*args)
 	    @elements = args
 	end

@@ -116,7 +116,8 @@ end
 
 def parse
     do_parse
-    JSGF::Grammar.new(	character_encoding:@charset,
+    JSGF::Grammar.new(	name:@grammar_name,
+			character_encoding:@charset,
 			locale:@locale,
 			private_rules:@private_rules,
 			public_rules:@public_rules,
