@@ -27,31 +27,34 @@ rule_list: rule | rule_list rule;
 
 rule_name: '<' TOKEN '>' { result = val[1] }
 
-rule: rule_name '=' alternate_list ';'		    { define_rule(val[0], :private, *(val[2..-2])) }
-	| PUBLIC rule_name '=' alternate_list ';'   { define_rule(val[1], :public, val[3]) }
+rule: rule_name '=' alternation ';'	{ result = define_rule(val[0], :private, *(val[2..-2])) }
+	| rule_name '=' atom_list ';'	{ result = define_rule(val[0], :private, *(val[2..-2])) }
+	| PUBLIC rule			{ val[1][:visibility] = :public }
 	;
 
-alternate_list: rule_expansion		    { result = val.first }
-	| alternate_list '|' rule_expansion { result = define_alternation(*val) }
+alternation: alternation_item			{ result = val.first }
+	| alternation '|' alternation_item	{ result = define_alternation(*val) }
 	;
 
-rule_expansion: tagged_rule_item		{ result = val.first }
-	| rule_expansion tagged_rule_item	{ result = val }
+alternation_item: rule_atom | weighted_item;
+
+tagged_atom: rule_atom
+	| tagged_atom TAG { val[0][:tags].push(val[1]); result = val[0] }
 	;
 
-tagged_rule_item: rule_item
-	| tagged_rule_item TAG { val[0][:tags].push(val[1]); result = val[0] }
+atom_list: tagged_atom
+	| atom_list tagged_atom	{ result = val; }
 	;
-
-rule_item: rule_atom | weighted_item;
 
 weighted_item: WEIGHT rule_atom { val[1][:weight] = val.first[1..-2].to_f; result = val[1] }
+	;
 
-rule_group: '(' alternate_list ')'	{ result = val[1] };
-rule_optional: '[' alternate_list ']'	{ result = define_optional(val[1]) };
+group_list: alternation | atom_list;
+rule_group: '(' group_list ')' { result = val[1] };
+rule_optional: '[' group_list ']' { result = define_optional(val[1]) };
 
 rule_atom: TOKEN { result = define_atom(val.first) }
-	| rule_name
+	| rule_name #{ $$ = jsgf_atom_new($1, 1.0); ckd_free($1); }
 	| rule_group
 	| rule_optional
 	| rule_atom '*' { result = JSGF::Repetition.new(val[0], 0) }
@@ -74,6 +77,7 @@ attr_reader :handler
 def initialize(tokenizer)
     @private_rules = {}
     @public_rules = {}
+    @rules = {}
     tokenizer = JSGF::Tokenizer.new(tokenizer) if tokenizer.is_a?(String)
     @tokenizer = tokenizer
     super()
@@ -103,20 +107,25 @@ end
 
 def define_rule(name, visibility=:private, *args)
     r = {name: name, visibility:visibility, atoms:args.flatten}
-    if visibility == :private
-	@private_rules[name] = r
-    else
-	@public_rules[name] = r
-    end
+    @rules[name] = r
     r
 end
 
 def next_token
     @tokenizer.next_token
-end
+  end
 
 def parse
     do_parse
+
+    @rules.each do |(k,v)|
+	if v[:visibility] == :private
+	    @private_rules[k] = v
+	else
+	    @public_rules[k] = v
+	end
+    end
+
     JSGF::Grammar.new(	name:@grammar_name,
 			character_encoding:@charset,
 			locale:@locale,
