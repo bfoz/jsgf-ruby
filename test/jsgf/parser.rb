@@ -120,4 +120,26 @@ describe JSGF::Parser do
 	    rule.size.must_equal 3
 	end
     end
+
+    describe 'when parsing rule references' do
+	it 'must parse a rule reference' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=<rule1>;<rule1>=one;').parse
+	    grammar.rules.size.must_equal 2
+	    grammar.rules.keys.must_equal ['rule', 'rule1']
+	    grammar.rules['rule'][:atoms].must_equal [{name:'rule1', weight:1.0, tags:[]}]
+	    grammar.rules['rule1'][:atoms].must_equal [{atom:'one', weight:1.0, tags:[]}]
+	end
+
+	it 'must parse a weighted rule reference' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>= /0.5/ <rule1> | /0.5/ two; <rule1>=one;').parse
+	    grammar.rules.size.must_equal 2
+	    grammar.rules.keys.must_equal ['rule', 'rule1']
+
+	    grammar.rules['rule'][:atoms].size.must_equal 1
+	    grammar.rules['rule'][:atoms].first.must_be_kind_of JSGF::Alternation
+	    grammar.rules['rule'][:atoms].first.elements.must_equal [{name:'rule1', weight:0.5, tags:[]}, {atom:'two', weight:0.5, tags:[]}]
+
+	    grammar.rules['rule1'][:atoms].must_equal [{atom:'one', weight:1.0, tags:[]}]
+	end
+    end
 end

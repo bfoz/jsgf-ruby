@@ -54,7 +54,7 @@ rule_group: '(' group_list ')' { result = val[1] };
 rule_optional: '[' group_list ']' { result = define_optional(val[1]) };
 
 rule_atom: TOKEN { result = define_atom(val.first) }
-	| rule_name #{ $$ = jsgf_atom_new($1, 1.0); ckd_free($1); }
+	| rule_name	{ result = rule_reference(val[0]) }
 	| rule_group
 	| rule_optional
 	| rule_atom '*' { result = JSGF::Repetition.new(val[0], 0) }
@@ -109,6 +109,10 @@ def define_rule(name, visibility=:private, *args)
     r = {name: name, visibility:visibility, atoms:args.flatten}
     @rules[name] = r
     r
+end
+
+def rule_reference(name)
+    {name:name, weight:1.0, tags:[]}
 end
 
 def next_token

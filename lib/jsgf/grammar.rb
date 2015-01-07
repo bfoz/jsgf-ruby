@@ -56,8 +56,12 @@ module JSGF
 		    atom.optional ? ('[' + s + ']') : s
 		when Optional then '[' + atom.elements.map {|a| unparse_atom(a, nested:nested)}.join(' | ') + ']'
 		else
-		    weight = (atom[:weight] != 1.0) ? atom[:weight] : nil
-		    [weight, atom[:atom], *atom[:tags]].compact.join(' ')
+		    weight = (atom[:weight] != 1.0) ? "/#{atom[:weight]}/" : nil
+		    if atom[:name]
+			[weight, '<' + atom[:name] + '>'].compact.join(' ')
+		    else
+			[weight, atom[:atom], *atom[:tags]].compact.join(' ')
+		    end
 	    end
 	end
     end

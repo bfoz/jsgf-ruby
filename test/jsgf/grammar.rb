@@ -51,4 +51,16 @@ describe JSGF::Grammar do
 	grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=(one two) | three;').parse
 	grammar.to_s.must_equal '#JSGF V1.0;\ngrammar header_grammar;\n<rule> = (one two) | three;'
     end
+
+    describe 'when unparsing rule references' do
+	it 'must unparse a rule reference' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=(one <rule2>) | three; <rule2>=two;').parse
+	    grammar.to_s.must_equal '#JSGF V1.0;\ngrammar header_grammar;\n<rule> = (one <rule2>) | three;\n<rule2> = two;'
+	end
+
+	it 'must unparse a weighted rule reference' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>= /0.5/ one | /0.5/ <rule2>; <rule2>=two;').parse
+	    grammar.to_s.must_equal '#JSGF V1.0;\ngrammar header_grammar;\n<rule> = /0.5/ one | /0.5/ <rule2>;\n<rule2> = two;'
+	end
+    end
 end
