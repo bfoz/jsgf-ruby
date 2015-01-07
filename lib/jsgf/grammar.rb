@@ -32,7 +32,7 @@ module JSGF
 		"public <#{name}> = #{atoms};"
 	    end
 
-	    [header, grammar_header, *public_rule_array, *private_rule_array].join('\n')
+	    [header, grammar_header, *public_rule_array, *private_rule_array].join("\n")
 	end
 
     private
