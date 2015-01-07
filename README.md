@@ -1,4 +1,4 @@
-Jsgf
+JSGF
 ====
 
 [![Build Status](https://travis-ci.org/bfoz/jsgf-ruby.png)](https://travis-ci.org/bfoz/jsgf-ruby)
