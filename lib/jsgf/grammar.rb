@@ -24,11 +24,11 @@ module JSGF
 
 	def to_s
 	    private_rule_array = @private_rules.map do |(name, rule)|
-		atoms = rule[:atoms].map {|a| unparse_atom(a) }.join(' ')
+		atoms = rule.map {|a| unparse_atom(a) }.join(' ')
 		"<#{name}> = #{atoms};"
 	    end
 	    public_rule_array = @public_rules.map do |(name, rule)|
-		atoms = rule[:atoms].map {|a| unparse_atom(a) }.join(' ')
+		atoms = rule.map {|a| unparse_atom(a) }.join(' ')
 		"public <#{name}> = #{atoms};"
 	    end
 

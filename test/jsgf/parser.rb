@@ -26,21 +26,21 @@ describe JSGF::Parser do
 	grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=one;').parse
 	grammar.rules.size.must_equal 1
 	grammar.rules.keys.must_equal ['rule']
-	grammar.rules['rule'][:atoms].size.must_equal 1
+	grammar.rules['rule'].size.must_equal 1
     end
 
     it 'must parse a rule with multiple atoms' do
 	grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=one two;').parse
 	grammar.rules.size.must_equal 1
 	grammar.rules.keys.must_equal ['rule']
-	grammar.rules['rule'][:atoms].size.must_equal 2
+	grammar.rules['rule'].size.must_equal 2
     end
 
     it 'must parse a rule with multiple grouped atoms' do
 	grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=(one two);').parse
 	grammar.rules.size.must_equal 1
 	grammar.rules.keys.must_equal ['rule']
-	grammar.rules['rule'][:atoms].size.must_equal 2
+	grammar.rules['rule'].size.must_equal 2
     end
 
     describe 'when parsing an alternation' do
@@ -48,46 +48,46 @@ describe JSGF::Parser do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=one | two;').parse
 	    grammar.rules.size.must_equal 1
 	    grammar.rules.keys.must_equal ['rule']
-	    grammar.rules['rule'][:atoms].size.must_equal 1
+	    grammar.rules['rule'].size.must_equal 1
 
-	    alternation = grammar.rules['rule'][:atoms].first
+	    alternation = grammar.rules['rule'].first
 	    alternation.must_be_kind_of JSGF::Alternation
 	    alternation.size.must_equal 2
 	end
-	
+
 	it 'must parse a rule with a bigger alternation' do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=one | two | three;').parse
 	    grammar.rules.size.must_equal 1
 	    grammar.rules.keys.must_equal ['rule']
-	    grammar.rules['rule'][:atoms].size.must_equal 1
+	    grammar.rules['rule'].size.must_equal 1
 
-	    alternation = grammar.rules['rule'][:atoms].first
+	    alternation = grammar.rules['rule'].first
 	    alternation.must_be_kind_of JSGF::Alternation
 	    alternation.size.must_equal 3
-	    alternation.elements[0][:atom].must_equal 'one'
-	    alternation.elements[1][:atom].must_equal 'two'
-	    alternation.elements[2][:atom].must_equal 'three'
+	    alternation.elements[0].must_equal Hash[atom:'one', weight:1.0, tags:[]]
+	    alternation.elements[1].must_equal Hash[atom:'two', weight:1.0, tags:[]]
+	    alternation.elements[2].must_equal Hash[atom:'three', weight:1.0, tags:[]]
 	end
 
 	it 'must parse a weighted alternation' do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>= /0.5/ one | /0.25/ two | /0.25/ three;').parse
 	    grammar.rules.keys.must_equal ['rule']
-	    grammar.rules['rule'][:atoms].size.must_equal 1
+	    grammar.rules['rule'].size.must_equal 1
 
-	    alternation = grammar.rules['rule'][:atoms].first
+	    alternation = grammar.rules['rule'].first
 	    alternation.must_be_kind_of JSGF::Alternation
 	    alternation.size.must_equal 3
 	    alternation.weights.must_equal [0.5, 0.25, 0.25]
-	    alternation.elements[0][:atom].must_equal 'one'
+	    alternation.elements[0].must_equal Hash[atom:'one', weight:0.5, tags:[]]
 	end
 
 	it 'must parse a grouped alternation' do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=(one | two | three);').parse
 	    grammar.rules.size.must_equal 1
 	    grammar.rules.keys.must_equal ['rule']
-	    grammar.rules['rule'][:atoms].size.must_equal 1
-	    grammar.rules['rule'][:atoms].first.must_be_kind_of JSGF::Alternation
-	    grammar.rules['rule'][:atoms].first.size.must_equal 3
+	    grammar.rules['rule'].size.must_equal 1
+	    grammar.rules['rule'].first.must_be_kind_of JSGF::Alternation
+	    grammar.rules['rule'].first.size.must_equal 3
 	end
     end
 
@@ -96,16 +96,16 @@ describe JSGF::Parser do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=[one];').parse
 	    grammar.rules.size.must_equal 1
 	    grammar.rules.keys.must_equal ['rule']
-	    grammar.rules['rule'][:atoms].size.must_equal 1
+	    grammar.rules['rule'].size.must_equal 1
 	end
 
 	it 'must parse an optional alternation' do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=[one | two];').parse
 	    grammar.rules.size.must_equal 1
 	    grammar.rules.keys.must_equal ['rule']
-	    grammar.rules['rule'][:atoms].size.must_equal 1
+	    grammar.rules['rule'].size.must_equal 1
 
-	    rule = grammar.rules['rule'][:atoms]
+	    rule = grammar.rules['rule']
 	    rule.first.must_be_kind_of JSGF::Alternation
 	    rule.first.optional.must_equal true
 	end
@@ -114,9 +114,9 @@ describe JSGF::Parser do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=one two [three | four];').parse
 	    grammar.rules.size.must_equal 1
 	    grammar.rules.keys.must_equal ['rule']
-	    grammar.rules['rule'][:atoms].size.must_equal 3
+	    grammar.rules['rule'].size.must_equal 3
 
-	    rule = grammar.rules['rule'][:atoms]
+	    rule = grammar.rules['rule']
 	    rule.size.must_equal 3
 	end
     end
@@ -126,8 +126,8 @@ describe JSGF::Parser do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=<rule1>;<rule1>=one;').parse
 	    grammar.rules.size.must_equal 2
 	    grammar.rules.keys.must_equal ['rule', 'rule1']
-	    grammar.rules['rule'][:atoms].must_equal [{name:'rule1', weight:1.0, tags:[]}]
-	    grammar.rules['rule1'][:atoms].must_equal [{atom:'one', weight:1.0, tags:[]}]
+	    grammar.rules['rule'].must_equal [{name:'rule1', weight:1.0, tags:[]}]
+	    grammar.rules['rule1'].must_equal [{atom:'one', weight:1.0, tags:[]}]
 	end
 
 	it 'must parse a weighted rule reference' do
@@ -135,11 +135,11 @@ describe JSGF::Parser do
 	    grammar.rules.size.must_equal 2
 	    grammar.rules.keys.must_equal ['rule', 'rule1']
 
-	    grammar.rules['rule'][:atoms].size.must_equal 1
-	    grammar.rules['rule'][:atoms].first.must_be_kind_of JSGF::Alternation
-	    grammar.rules['rule'][:atoms].first.elements.must_equal [{name:'rule1', weight:0.5, tags:[]}, {atom:'two', weight:0.5, tags:[]}]
+	    grammar.rules['rule'].size.must_equal 1
+	    grammar.rules['rule'].first.must_be_kind_of JSGF::Alternation
+	    grammar.rules['rule'].first.elements.must_equal [{name:'rule1', weight:0.5, tags:[]}, {atom:'two', weight:0.5, tags:[]}]
 
-	    grammar.rules['rule1'][:atoms].must_equal [{atom:'one', weight:1.0, tags:[]}]
+	    grammar.rules['rule1'].must_equal [{atom:'one', weight:1.0, tags:[]}]
 	end
     end
 end

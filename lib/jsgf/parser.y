@@ -124,9 +124,9 @@ def parse
 
     @rules.each do |(k,v)|
 	if v[:visibility] == :private
-	    @private_rules[k] = v
+	    @private_rules[k] = v[:atoms]
 	else
-	    @public_rules[k] = v
+	    @public_rules[k] = v[:atoms]
 	end
     end
 
