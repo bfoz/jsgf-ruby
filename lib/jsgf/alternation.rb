@@ -1,7 +1,7 @@
 module JSGF
     class Alternation
 	attr_reader :elements
-	attr_writer :optional
+	attr_accessor :optional
 	attr_reader :tags
 
 	def initialize(*args)

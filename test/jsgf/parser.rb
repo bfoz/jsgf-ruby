@@ -33,16 +33,14 @@ describe JSGF::Parser do
 	grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=one two;').parse
 	grammar.rules.size.must_equal 1
 	grammar.rules.keys.must_equal ['rule']
-	grammar.rules['rule'][:atoms].size.must_equal 1
-	grammar.rules['rule'][:atoms].first.size.must_equal 2
+	grammar.rules['rule'][:atoms].size.must_equal 2
     end
 
     it 'must parse a rule with multiple grouped atoms' do
 	grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=(one two);').parse
 	grammar.rules.size.must_equal 1
 	grammar.rules.keys.must_equal ['rule']
-	grammar.rules['rule'][:atoms].size.must_equal 1
-	grammar.rules['rule'][:atoms].first.size.must_equal 2
+	grammar.rules['rule'][:atoms].size.must_equal 2
     end
 
     describe 'when parsing an alternation' do
@@ -93,17 +91,33 @@ describe JSGF::Parser do
 	end
     end
 
-    it 'must parse an optional group of a single atom' do
-	grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=[one];').parse
-	grammar.rules.size.must_equal 1
-	grammar.rules.keys.must_equal ['rule']
-	grammar.rules['rule'][:atoms].size.must_equal 1
-    end
+    describe 'when parsing optionals' do
+	it 'must parse an optional group of a single atom' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=[one];').parse
+	    grammar.rules.size.must_equal 1
+	    grammar.rules.keys.must_equal ['rule']
+	    grammar.rules['rule'][:atoms].size.must_equal 1
+	end
 
-    it 'must parse an optional alternation' do
-	grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=[one | two];').parse
-	grammar.rules.size.must_equal 1
-	grammar.rules.keys.must_equal ['rule']
-	grammar.rules['rule'][:atoms].size.must_equal 1
+	it 'must parse an optional alternation' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=[one | two];').parse
+	    grammar.rules.size.must_equal 1
+	    grammar.rules.keys.must_equal ['rule']
+	    grammar.rules['rule'][:atoms].size.must_equal 1
+
+	    rule = grammar.rules['rule'][:atoms]
+	    rule.first.must_be_kind_of JSGF::Alternation
+	    rule.first.optional.must_equal true
+	end
+
+	it 'must parse a multi-atom optional alternation' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=one two [three | four];').parse
+	    grammar.rules.size.must_equal 1
+	    grammar.rules.keys.must_equal ['rule']
+	    grammar.rules['rule'][:atoms].size.must_equal 3
+
+	    rule = grammar.rules['rule'][:atoms]
+	    rule.size.must_equal 3
+	end
     end
 end

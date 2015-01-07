@@ -64,6 +64,7 @@ require_relative 'alternation'
 require_relative 'grammar'
 require_relative 'optional'
 require_relative 'repetition'
+require_relative 'tokenizer'
 
 ---- inner
 
@@ -101,7 +102,7 @@ def define_atom(atom, weight=1.0, tags=[])
 end
 
 def define_rule(name, visibility=:private, *args)
-    r = {name:name, visibility:visibility, atoms:args}
+    r = {name: name, visibility:visibility, atoms:args.flatten}
     if visibility == :private
 	@private_rules[name] = r
     else

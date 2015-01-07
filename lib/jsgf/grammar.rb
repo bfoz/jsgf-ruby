@@ -51,7 +51,9 @@ module JSGF
 		when Array
 		    s = atom.map {|a| unparse_atom(a, nested:nested)}.join(' ')
 		    nested ? ('(' + s + ')') : s
-		when Alternation then atom.elements.map {|a| unparse_atom(a, nested:true)}.join(' | ')
+		when Alternation
+		    s = atom.elements.map {|a| unparse_atom(a, nested:true)}.join(' | ')
+		    atom.optional ? ('[' + s + ']') : s
 		when Optional then '[' + atom.elements.map {|a| unparse_atom(a, nested:nested)}.join(' | ') + ']'
 		else
 		    weight = (atom[:weight] != 1.0) ? atom[:weight] : nil
