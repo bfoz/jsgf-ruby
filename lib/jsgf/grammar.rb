@@ -23,6 +23,12 @@ module JSGF
 	    @public_rules.merge(@private_rules)
 	end
 
+	# @!attribute version
+	#   @return [String]  the JSGF specification version
+	def version
+	    @version || 'V1.0'
+	end
+
 	def to_s
 	    private_rule_array = @private_rules.map do |(name, rule)|
 		atoms = rule.map {|a| unparse_atom(a) }.join(' ')

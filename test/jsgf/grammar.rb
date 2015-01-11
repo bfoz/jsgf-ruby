@@ -6,9 +6,14 @@ describe JSGF::Grammar do
 	-> { JSGF::Grammar.new }.must_raise ArgumentError
     end
 
+    it 'must have a default version' do
+	JSGF::Grammar.new(name:'test').version.must_equal 'V1.0'
+	JSGF::Grammar.new(name:'test').to_s.must_equal "#JSGF V1.0;\ngrammar test;"
+    end
+
     it 'must unparse a header' do
 	grammar = JSGF::Parser.new('#JSGF; grammar header_grammar;').parse
-	grammar.to_s.must_equal "#JSGF;\ngrammar header_grammar;"
+	grammar.to_s.must_equal "#JSGF V1.0;\ngrammar header_grammar;"
     end
 
     it 'must unparse a header with a version' do
