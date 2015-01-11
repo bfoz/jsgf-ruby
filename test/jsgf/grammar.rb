@@ -2,6 +2,10 @@ require 'minitest/autorun'
 require 'jsgf/parser'
 
 describe JSGF::Grammar do
+    it 'must require a grammar name' do
+	-> { JSGF::Grammar.new }.must_raise ArgumentError
+    end
+
     it 'must unparse a header' do
 	grammar = JSGF::Parser.new('#JSGF; grammar header_grammar;').parse
 	grammar.to_s.must_equal "#JSGF;\ngrammar header_grammar;"

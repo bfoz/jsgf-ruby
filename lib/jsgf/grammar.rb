@@ -8,6 +8,7 @@ module JSGF
 	attr_reader :version
 
 	def initialize(name:nil, character_encoding:nil, locale:nil, private_rules:{}, public_rules:{}, version:nil)
+	    raise ArgumentError, "Grammar requires a name" unless name
 	    @character_encoding = character_encoding
 	    @locale = locale
 	    @grammar_name = name
