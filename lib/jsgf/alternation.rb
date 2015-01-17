@@ -1,5 +1,7 @@
 module JSGF
     class Alternation
+	include Enumerable
+
 	attr_reader :elements
 	attr_accessor :optional
 	attr_reader :tags
@@ -9,6 +11,12 @@ module JSGF
 	    @optional = false
 	    @tags = []
 	end
+
+	# @group Enumerable
+	def each(*args, &block)
+	    elements.each(*args, &block)
+	end
+	# @endgroup
 
 	def push(*args)
 	    @elements.push *args
