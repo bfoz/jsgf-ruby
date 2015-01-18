@@ -11,6 +11,26 @@ describe JSGF::Grammar do
 	JSGF::Grammar.new(name:'test').to_s.must_equal "#JSGF V1.0;\ngrammar test;"
     end
 
+    describe 'roots' do
+	it 'must not have roots without public rules' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar test; <rule>=one | two | three;').parse
+	    grammar.roots.must_equal nil
+	end
+
+	it 'must have one root for one public rule' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar test; public <rule>=one | two | three;').parse
+	    grammar.roots.size.must_equal 1
+	    grammar.roots['rule'].must_be_kind_of Array
+	end
+
+	it 'must have two roots for two public rules' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar test; public <rule1>=one | two | three; public <rule2>=four five;').parse
+	    grammar.roots.size.must_equal 2
+	    grammar.roots['rule1'].must_be_kind_of Array
+	    grammar.roots['rule2'].must_be_kind_of Array
+	end
+    end
+
     it 'must unparse a header' do
 	grammar = JSGF::Parser.new('#JSGF; grammar header_grammar;').parse
 	grammar.to_s.must_equal "#JSGF V1.0;\ngrammar header_grammar;"

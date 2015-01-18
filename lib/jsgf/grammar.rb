@@ -17,6 +17,12 @@ module JSGF
 	    @version = version
 	end
 
+	# @!attribute roots
+	#   @return [Hash]  the set of public rules that comprise the roots of the {Grammar} tree
+	def roots
+	    public_rules.empty? ? nil : public_rules
+	end
+
 	# @!attribute rules
 	#   @return [Hash]  Returns a {Hash} of the public and private rules, keyed by rule name
 	def rules
