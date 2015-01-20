@@ -29,6 +29,13 @@ describe JSGF::Grammar do
 	    grammar.roots['rule1'].must_be_kind_of Array
 	    grammar.roots['rule2'].must_be_kind_of Array
 	end
+
+	it 'must ignore nested roots' do
+	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar test; public <rule1>=one | two | three; public <rule2>=four <rule3>; public <rule3>=five;').parse
+	    grammar.roots.size.must_equal 2
+	    grammar.roots['rule1'].must_be_kind_of Array
+	    grammar.roots['rule2'].must_be_kind_of Array
+	end
     end
 
     it 'must unparse a header' do

@@ -20,7 +20,13 @@ module JSGF
 	# @!attribute roots
 	#   @return [Hash]  the set of public rules that comprise the roots of the {Grammar} tree
 	def roots
-	    public_rules.empty? ? nil : public_rules
+	    # Descend through the public rule trees to see if they reference each other
+	    root_rules = public_rules.dup
+	    public_rules.each do |(name, rule)|
+		names = find_rule_names(rule).compact
+		root_rules.delete_if {|k,v| names.include?(k)}
+	    end
+	    root_rules.empty? ? nil : root_rules
 	end
 
 	# @!attribute rules
@@ -49,6 +55,20 @@ module JSGF
 	end
 
     private
+	# Expand the given rule and collect any references to other rules
+	# @param rule	[Array]	the right-hand-side of the rule to expand
+	# @return [Array]   an array of referenced rule names
+	def find_rule_names(rule)
+	    case rule
+		when Alternation, Array, Optional
+		    rule.flat_map {|a| find_rule_names(a) }
+		when Hash
+		    rule[:name]
+		else
+		    raise StandardError, "Unkown atom #{rule.class}"
+	    end
+	end
+
 	# Generate the grammar name header line
 	def grammar_header
 	    "grammar #{grammar_name};"
