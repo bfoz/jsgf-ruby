@@ -7,7 +7,20 @@ module JSGF
 	attr_reader :tags
 
 	def initialize(*args)
-	    @elements = args
+	    @elements = args.map do |a|
+		case a
+		    when String
+			case a
+			    when /\<(.*)\>/, /:(.*)/ then {name:$1, weight:1.0, tags:[]}
+			    else
+				{atom:a, weight:1.0, tags:[]}
+			end
+		    when Symbol then {name:a.to_s, weight:1.0, tags:[]}
+		    else
+			a
+		end
+	    end
+
 	    @optional = false
 	    @tags = []
 	end

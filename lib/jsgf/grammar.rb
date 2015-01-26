@@ -1,3 +1,5 @@
+require_relative 'optional'
+
 module JSGF
     class Grammar
 	attr_reader :character_encoding
@@ -7,26 +9,50 @@ module JSGF
 	attr_reader :public_rules
 	attr_reader :version
 
-	def initialize(name:nil, character_encoding:nil, locale:nil, private_rules:{}, public_rules:{}, version:nil)
+	# @param rules	[Hash]	the rules to search
+	# @return [Array<Hash,Hash>]	the set of root and non-root rules from the given set of rules
+	def self.roots(rules)
+	    # Descend through the rule trees to see if they reference each other.
+	    #  Root rules aren't referenced by any other rule.
+	    names = rules.flat_map {|(name,rule)| find_rule_names(rule)}.compact.uniq
+	    left, right = rules.partition {|name, rule| names.include?(name) }
+	    [Hash[right], Hash[left]]
+	end
+
+	# Expand the given rule and collect any references to other rules
+	# @param rule	[Array]	the right-hand-side of the rule to expand
+	# @return [Array]   an array of referenced rule names
+	def self.find_rule_names(rule)
+	    case rule
+		when Alternation, Array, Optional
+		    rule.flat_map {|a| find_rule_names(a) }
+		when Hash
+		    rule[:name]
+		else
+		    raise StandardError, "Unkown atom #{rule.class}"
+	    end
+	end
+
+	def initialize(name:nil, character_encoding:nil, locale:nil, private_rules:{}, public_rules:{}, rules:nil, version:nil)
 	    raise ArgumentError, "Grammar requires a name" unless name
 	    @character_encoding = character_encoding
 	    @locale = locale
 	    @grammar_name = name
-	    @private_rules = private_rules
-	    @public_rules = public_rules
 	    @version = version
+
+	    if rules and !rules.empty?
+		@public_rules, @private_rules = ::JSGF::Grammar.roots(rules)
+	    else
+		@private_rules = private_rules
+		@public_rules = public_rules
+	    end
 	end
 
 	# @!attribute roots
 	#   @return [Hash]  the set of public rules that comprise the roots of the {Grammar} tree
 	def roots
-	    # Descend through the public rule trees to see if they reference each other
-	    root_rules = public_rules.dup
-	    public_rules.each do |(name, rule)|
-		names = find_rule_names(rule).compact
-		root_rules.delete_if {|k,v| names.include?(k)}
-	    end
-	    root_rules.empty? ? nil : root_rules
+	    r = self.class.roots(public_rules).first
+	    r.empty? ? nil : r
 	end
 
 	# @!attribute rules
@@ -55,19 +81,6 @@ module JSGF
 	end
 
     private
-	# Expand the given rule and collect any references to other rules
-	# @param rule	[Array]	the right-hand-side of the rule to expand
-	# @return [Array]   an array of referenced rule names
-	def find_rule_names(rule)
-	    case rule
-		when Alternation, Array, Optional
-		    rule.flat_map {|a| find_rule_names(a) }
-		when Hash
-		    rule[:name]
-		else
-		    raise StandardError, "Unkown atom #{rule.class}"
-	    end
-	end
 
 	# Generate the grammar name header line
 	def grammar_header
