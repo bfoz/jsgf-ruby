@@ -38,5 +38,17 @@ describe JSGF::Tokenizer do
 	it 'must skip C-style comments' do
 	    JSGF::Tokenizer.new(' /* a comment */ some_token ').next_token.must_equal [:TOKEN, 'some_token']
 	end
+
+	it 'must skip multi-line C-style comments' do
+	    JSGF::Tokenizer.new(" /* a\nmulti-line\ncomment */ some_token ").next_token.must_equal [:TOKEN, 'some_token']
+	end
+
+	it 'must skip single-line C++ comments' do
+	    JSGF::Tokenizer.new(' some_token // a comment ').next_token.must_equal [:TOKEN, 'some_token']
+	end
+
+	it 'must skip single-line C++ comments at the beginning of a line' do
+	    JSGF::Tokenizer.new(" some_token // \n//a comment ").next_token.must_equal [:TOKEN, 'some_token']
+	end
     end
 end
