@@ -12,7 +12,7 @@ module JSGF
 	    %r{/\d*(\.\d+)?/}			=> :WEIGHT,
 	}
 
-	# @param io [IO]    the {IO} stream to read from
+	# @param io [IO]    the {::IO} stream to read from
 	def initialize(io)
 	    io = io.read unless io.is_a?(String)
 	    @scanner = StringScanner.new(io)
