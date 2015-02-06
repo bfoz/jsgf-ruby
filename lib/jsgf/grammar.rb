@@ -80,6 +80,16 @@ module JSGF
 	    [header, grammar_header, *public_rule_array, *private_rule_array].join("\n")
 	end
 
+	# Write the {Grammar} to a file or an {IO} stream
+	# @param file	[String,IO] a filename, or an IO stream, to write to
+	def write(file)
+	    if file.is_a?(String)
+		File.write(file, self.to_s)
+	    else
+		file.write(self.to_s)
+	    end
+	end
+
     private
 
 	# Generate the grammar name header line

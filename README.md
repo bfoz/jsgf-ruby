@@ -17,6 +17,20 @@ require 'jsgf'
 grammar = JSGF.read('example.gram')
 ```
 
+Writing to a file is similarly simple.
+
+```ruby
+grammar.write('my_grammar.gram')
+```
+
+You can also write to an IO stream.
+
+```ruby
+File.open('my_grammar.gram', 'w') do |f|
+    grammar.write(f)
+end
+```
+
 ### Grammar DSL
 
 The JSGF gem includes a simple DSL for generating new grammars. The syntax follows the
