@@ -39,21 +39,21 @@ alternation: alternation_item			{ result = val.first }
 alternation_item: rule_atom | weighted_item;
 
 tagged_atom: rule_atom
-	| tagged_atom TAG { val[0][:tags].push(val[1]); result = val[0] }
+	| tagged_atom TAG { val[0].tags.push(val[1]); result = val[0] }
 	;
 
 atom_list: tagged_atom
 	| atom_list tagged_atom	{ result = val; }
 	;
 
-weighted_item: WEIGHT rule_atom { val[1][:weight] = val.first[1..-2].to_f; result = val[1] }
+weighted_item: WEIGHT rule_atom { val[1].respond_to?(:weight) ? (val[1].weight = val.first[1..-2].to_f) : (val[1][:weight] = val.first[1..-2].to_f); result = val[1] }
 	;
 
 group_list: alternation | atom_list;
 rule_group: '(' group_list ')' { result = val[1] };
 rule_optional: '[' group_list ']' { result = define_optional(val[1]) };
 
-rule_atom: TOKEN { result = define_atom(val.first) }
+rule_atom: TOKEN	{ result = JSGF::Atom.new(val.first) }
 	| rule_name	{ result = rule_reference(val[0]) }
 	| rule_group
 	| rule_optional
@@ -99,10 +99,6 @@ def define_optional(*args)
     else
 	JSGF::Optional.new(*args)
     end
-end
-
-def define_atom(atom, weight=1.0, tags=[])
-   {atom:atom, weight:weight, tags:[]}
 end
 
 def define_rule(name, visibility=:private, *args)

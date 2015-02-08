@@ -20,13 +20,13 @@ describe JSGF::Builder do
 	end
 
 	grammar.rules.size.must_equal 1
-	grammar.rules['rule1'].must_equal [{atom:'one', weight:1.0, tags:[]}]
+	grammar.rules['rule1'].must_equal [Atom.new('one')]
     end
 
     it 'must build a multi-atom rule' do
 	grammar = JSGF::Builder.build {rule rule1: 'one two' }
 	grammar.rules.size.must_equal 1
-	grammar.rules['rule1'].must_equal [{atom:'one', weight:1.0, tags:[]}, {atom:'two', weight:1.0, tags:[]}]
+	grammar.rules['rule1'].must_equal [Atom.new('one'), Atom.new('two')]
     end
 
     it 'must build a rule with a rule reference as a Symbol' do
@@ -66,7 +66,7 @@ describe JSGF::Builder do
 	    end
 	    grammar.rules.size.must_equal 1
 	    grammar.rules['rule1'].first.must_be_kind_of JSGF::Alternation
-	    grammar.rules['rule1'].first.elements.must_equal [{atom:'one', weight:1.0, tags:[]}, {atom:'two', weight:1.0, tags:[]}]
+	    grammar.rules['rule1'].first.elements.must_equal [Atom.new('one'), Atom.new('two')]
 	end
 
 	it 'must build an alternation from an array of rule reference symbols' do

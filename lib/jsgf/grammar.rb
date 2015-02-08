@@ -1,3 +1,4 @@
+require_relative 'atom'
 require_relative 'optional'
 
 module JSGF
@@ -26,6 +27,7 @@ module JSGF
 	    case rule
 		when Alternation, Array, Optional
 		    rule.flat_map {|a| find_rule_names(a) }
+		when Atom then []
 		when Hash
 		    rule[:name]
 		else
@@ -110,13 +112,12 @@ module JSGF
 		when Alternation
 		    s = atom.elements.map {|a| unparse_atom(a, nested:true)}.join(' | ')
 		    atom.optional ? ('[' + s + ']') : s
+		when Atom then atom.to_s
 		when Optional then '[' + atom.elements.map {|a| unparse_atom(a, nested:nested)}.join(' | ') + ']'
 		else
 		    weight = (atom[:weight] != 1.0) ? "/#{atom[:weight]}/" : nil
 		    if atom[:name]
 			[weight, '<' + atom[:name] + '>'].compact.join(' ')
-		    else
-			[weight, atom[:atom], *atom[:tags]].compact.join(' ')
 		    end
 	    end
 	end

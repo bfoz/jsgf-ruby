@@ -44,7 +44,7 @@ module JSGF
 			    case a
 				when /\<(.*)\>/, /:(.*)/ then {name:$1, weight:1.0, tags:[]}
 				else
-				    {atom:a, weight:1.0, tags:[]}
+				    Atom.new(a)
 			    end
 			end
 		end

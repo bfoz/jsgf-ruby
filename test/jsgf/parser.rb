@@ -64,9 +64,9 @@ describe JSGF::Parser do
 	    alternation = grammar.rules['rule'].first
 	    alternation.must_be_kind_of JSGF::Alternation
 	    alternation.size.must_equal 3
-	    alternation.elements[0].must_equal Hash[atom:'one', weight:1.0, tags:[]]
-	    alternation.elements[1].must_equal Hash[atom:'two', weight:1.0, tags:[]]
-	    alternation.elements[2].must_equal Hash[atom:'three', weight:1.0, tags:[]]
+	    alternation.elements[0].must_equal Atom.new('one')
+	    alternation.elements[1].must_equal Atom.new('two')
+	    alternation.elements[2].must_equal Atom.new('three')
 	end
 
 	it 'must parse a weighted alternation' do
@@ -78,7 +78,9 @@ describe JSGF::Parser do
 	    alternation.must_be_kind_of JSGF::Alternation
 	    alternation.size.must_equal 3
 	    alternation.weights.must_equal [0.5, 0.25, 0.25]
-	    alternation.elements[0].must_equal Hash[atom:'one', weight:0.5, tags:[]]
+	    alternation.elements[0].must_equal Atom.new('one', weight:0.5)
+	    alternation.elements[1].must_equal Atom.new('two', weight:0.25)
+	    alternation.elements[2].must_equal Atom.new('three', weight:0.25)
 	end
 
 	it 'must parse a grouped alternation' do
@@ -127,7 +129,7 @@ describe JSGF::Parser do
 	    grammar.rules.size.must_equal 2
 	    grammar.rules.keys.must_equal ['rule', 'rule1']
 	    grammar.rules['rule'].must_equal [{name:'rule1', weight:1.0, tags:[]}]
-	    grammar.rules['rule1'].must_equal [{atom:'one', weight:1.0, tags:[]}]
+	    grammar.rules['rule1'].must_equal [Atom.new('one')]
 	end
 
 	it 'must parse a weighted rule reference' do
@@ -137,9 +139,9 @@ describe JSGF::Parser do
 
 	    grammar.rules['rule'].size.must_equal 1
 	    grammar.rules['rule'].first.must_be_kind_of JSGF::Alternation
-	    grammar.rules['rule'].first.elements.must_equal [{name:'rule1', weight:0.5, tags:[]}, {atom:'two', weight:0.5, tags:[]}]
+	    grammar.rules['rule'].first.elements.must_equal [{name:'rule1', weight:0.5, tags:[]}, Atom.new('two', weight:0.5)]
 
-	    grammar.rules['rule1'].must_equal [{atom:'one', weight:1.0, tags:[]}]
+	    grammar.rules['rule1'].must_equal [Atom.new('one')]
 	end
     end
 end

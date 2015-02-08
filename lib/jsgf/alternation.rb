@@ -13,7 +13,7 @@ module JSGF
 			case a
 			    when /\<(.*)\>/, /:(.*)/ then {name:$1, weight:1.0, tags:[]}
 			    else
-				{atom:a, weight:1.0, tags:[]}
+				Atom.new(a)
 			end
 		    when Symbol then {name:a.to_s, weight:1.0, tags:[]}
 		    else
@@ -35,12 +35,14 @@ module JSGF
 	    @elements.push *args
 	end
 
+	# @group Attributes
 	def size
 	    @elements.size
 	end
 
 	def weights
-	    @elements.map {|a| a[:weight]}
+	    @elements.map {|a| a.respond_to?(:weight) ? a.weight : a[:weight]}
 	end
+	# @endgroup
     end
 end
