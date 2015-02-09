@@ -67,6 +67,7 @@ require_relative 'alternation'
 require_relative 'grammar'
 require_relative 'optional'
 require_relative 'repetition'
+require_relative 'rule'
 require_relative 'tokenizer'
 
 ---- inner
@@ -120,9 +121,9 @@ def parse
 
     @rules.each do |(k,v)|
 	if v[:visibility] == :private
-	    @private_rules[k] = v[:atoms]
+	    @private_rules[k] = JSGF::Rule.new(v[:atoms])
 	else
-	    @public_rules[k] = v[:atoms]
+	    @public_rules[k] = JSGF::Rule.new(v[:atoms])
 	end
     end
 

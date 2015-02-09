@@ -37,8 +37,8 @@ module JSGF
 	def rule(**options)
 	    options.each do |name, v|
 		@rules[name.to_s] = case v
-		    when Array	then [Alternation.new(*v)]
-		    when Symbol	then [{name:v.to_s, weight:1.0, tags:[]}]
+		    when Array	then Rule.new [Alternation.new(*v)]
+		    when Symbol	then Rule.new [{name:v.to_s, weight:1.0, tags:[]}]
 		    else
 			v.split(' ').map do |a|
 			    case a
