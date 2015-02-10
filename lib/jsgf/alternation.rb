@@ -1,3 +1,5 @@
+require_relative 'rule'
+
 module JSGF
     class Alternation
 	include Enumerable
@@ -9,12 +11,7 @@ module JSGF
 	def initialize(*args)
 	    @elements = args.map do |a|
 		case a
-		    when String
-			case a
-			    when /\<(.*)\>/, /:(.*)/ then {name:$1, weight:1.0, tags:[]}
-			    else
-				Atom.new(a)
-			end
+		    when String then Rule.parse_atom(a)
 		    when Symbol then {name:a.to_s, weight:1.0, tags:[]}
 		    else
 			a

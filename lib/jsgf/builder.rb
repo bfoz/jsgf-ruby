@@ -40,13 +40,7 @@ module JSGF
 		    when Array	then Rule.new [Alternation.new(*v)]
 		    when Symbol	then Rule.new [{name:v.to_s, weight:1.0, tags:[]}]
 		    else
-			v.split(' ').map do |a|
-			    case a
-				when /\<(.*)\>/, /:(.*)/ then {name:$1, weight:1.0, tags:[]}
-				else
-				    Atom.new(a)
-			    end
-			end
+			v.split(' ').map {|a| Rule.parse_atom(a) }
 		end
 	    end
 	end
