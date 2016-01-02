@@ -38,7 +38,7 @@ The JSGF gem includes a simple DSL for generating new grammars. The syntax follo
 the [JSGF](http://www.w3.org/TR/jsgf/) syntax, but with a few differences.
 
 - Rule names can be either Symbols or Strings (they're converted to Strings internally)
-- Rules can be referenced using symbols in addition to the angle-bracket syntax used by JSGF.
+- Rules can be referenced using symbols in addition to the angle-bracket syntax used by JSGF
 - Alternations are created using arrays
 - Rules are private by default, however the root rules are automatically made public
 
