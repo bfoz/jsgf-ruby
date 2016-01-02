@@ -3,6 +3,7 @@ JSGF
 
 [![Build Status](https://travis-ci.org/bfoz/jsgf-ruby.png)](https://travis-ci.org/bfoz/jsgf-ruby)
 [![Gem Version](https://badge.fury.io/rb/jsgf.svg)](http://badge.fury.io/rb/jsgf)
+[![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg?style=flat)](http://www.rubydoc.info/gems/jsgf/frames)
 
 For all of your [Java Speech Grammar Format](http://www.w3.org/TR/jsgf/) parsing needs.
 
