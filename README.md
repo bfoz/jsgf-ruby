@@ -81,4 +81,4 @@ Or install it yourself as:
 License
 -------
 
-Copyright 2015 Brandon Fosdick <bfoz@bfoz.net> and released under the BSD license.
+Copyright 2015-2016 Brandon Fosdick <bfoz@bfoz.net> and released under the BSD license.
