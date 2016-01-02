@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
     spec.name          = "jsgf"
-    spec.version       = '0.4.1'
+    spec.version       = '0.5'
     spec.authors       = ["Brandon Fosdick"]
     spec.email         = ["bfoz@bfoz.net"]
     spec.summary       = %q{Java Speech Grammar Format}
