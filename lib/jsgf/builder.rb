@@ -38,9 +38,33 @@ module JSGF
 	    options.each do |name, v|
 		@rules[name.to_s] = case v
 		    when Array	then Rule.new [Alternation.new(*v)]
-		    when Symbol	then Rule.new [{name:v.to_s, weight:1.0, tags:[]}]
+		    when Symbol	then Rule.new [Rule.parse_atom(v.to_s).tap {|a| a.reference=true}]
 		    else
-			v.split(' ').map {|a| Rule.parse_atom(a) }
+			stack = nil
+			v.split(' ').map do |a|
+			    if stack
+				if a == ']'
+				    next if stack.empty?
+
+				    if stack.length == 1
+					stack.first.optional = true
+					stack.first
+				    else
+					Optional.new(*stack)
+				    end.tap do
+					stack = nil
+				    end
+				else
+				    stack.push(Rule.parse_atom(a))
+				    next
+				end
+			    elsif a == '['
+				stack = []
+				next
+			    else
+				Rule.parse_atom(a)
+			    end
+			end.compact
 		end
 	    end
 	end

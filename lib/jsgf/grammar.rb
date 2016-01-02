@@ -27,11 +27,9 @@ module JSGF
 	    case rule
 		when Alternation, Array, Optional
 		    rule.flat_map {|a| find_rule_names(a) }
-		when Atom then []
-		when Hash
-		    rule[:name]
+		when Atom then rule.reference ? rule.atom : []
 		else
-		    raise StandardError, "Unkown atom #{rule.class}"
+		    raise StandardError, "Unkown atom #{rule.class}: #{rule}"
 	    end
 	end
 

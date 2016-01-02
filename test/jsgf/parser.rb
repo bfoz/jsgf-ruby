@@ -128,7 +128,7 @@ describe JSGF::Parser do
 	    grammar = JSGF::Parser.new('#JSGF V1.0; grammar header_grammar;<rule>=<rule1>;<rule1>=one;').parse
 	    grammar.rules.size.must_equal 2
 	    grammar.rules.keys.must_equal ['rule', 'rule1']
-	    grammar.rules['rule'].must_equal [{name:'rule1', weight:1.0, tags:[]}]
+	    grammar.rules['rule'].must_equal [JSGF::Atom.new('rule1', reference:true)]
 	    grammar.rules['rule1'].must_equal [Atom.new('one')]
 	end
 
@@ -139,7 +139,7 @@ describe JSGF::Parser do
 
 	    grammar.rules['rule'].size.must_equal 1
 	    grammar.rules['rule'].first.must_be_kind_of JSGF::Alternation
-	    grammar.rules['rule'].first.elements.must_equal [{name:'rule1', weight:0.5, tags:[]}, Atom.new('two', weight:0.5)]
+	    grammar.rules['rule'].first.elements.must_equal [JSGF::Atom.new('rule1', weight:0.5, reference:true), Atom.new('two', weight:0.5)]
 
 	    grammar.rules['rule1'].must_equal [Atom.new('one')]
 	end

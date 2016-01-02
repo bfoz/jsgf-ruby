@@ -5,14 +5,19 @@ module JSGF
 	include Enumerable
 
 	attr_reader :elements
+
+	# @!attribute
+	#   @return [Bool]  Sometimes an {Alternation} is optional
 	attr_accessor :optional
+	alias optional? optional
+
 	attr_reader :tags
 
 	def initialize(*args)
 	    @elements = args.map do |a|
 		case a
 		    when String then Rule.parse_atom(a)
-		    when Symbol then {name:a.to_s, weight:1.0, tags:[]}
+		    when Symbol then JSGF::Atom.new(a.to_s, reference:true)
 		    else
 			a
 		end

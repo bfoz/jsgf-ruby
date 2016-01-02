@@ -109,7 +109,7 @@ def define_rule(name, visibility=:private, *args)
 end
 
 def rule_reference(name)
-    {name:name, weight:1.0, tags:[]}
+    JSGF::Atom.new(name, reference:true)
 end
 
 def next_token

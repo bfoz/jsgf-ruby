@@ -51,6 +51,15 @@ grammar = JSGF.grammar 'Turtle' do
 end
 ```
 
+Atoms can be made optional using the JSGF square-bracket syntax...
+
+```ruby
+grammar = JSGF.grammar 'PoliteTurtle' do
+    rule move: '[please] go :direction :distance'
+    ...
+end
+```
+
 Installation
 ------------
 
